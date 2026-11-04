@@ -52,18 +52,32 @@ py -3.14 -m pip install -r requirements.txt
 The cloned clock library may have additional dependencies; follow its setup
 documentation if its import reports a missing package.
 
-## Updating the source as a developer
+## Publishing developer changes
 
-This project does not check for or install updates when the clock generator is
-run. Developers can update their local source checkout explicitly:
+When this project is open in VS Code, the
+`Auto-publish saved source changes` task watches for saved Python source files
+and the root `README.md`. After three seconds without further saves, it creates
+a local Git commit. The task asks for a descriptive Conventional Commit subject
+(for example, `feat(clock): add moon phase support`), records it under
+`[Unreleased]` in `CHANGELOG.md`, then asks whether to push the commit to
+GitHub. It only publishes from the `main` branch, only to this project's
+configured GitHub remote, and never force-pushes. Declining the push keeps the
+commit locally; pressing Enter at the commit prompt cancels the commit.
+
+The upstream 3DPrintedClocks submodule, generated files, and VS Code machine
+settings are excluded. If unrelated files are already staged, automatic
+publishing stops rather than including them. VS Code may ask you to allow
+automatic tasks when you first open the trusted workspace.
+
+To update your developer checkout from GitHub, run:
 
 ```powershell
 git pull --ff-only origin main
 git submodule update --init --recursive
 ```
 
-These commands update the developer's source checkout only; they do not enable
-runtime self-updates for people using the application.
+These developer Git operations do not add runtime self-updates for people using
+the application.
 
 ## Library attribution
 

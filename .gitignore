@@ -16,7 +16,8 @@ env/
 *.key
 
 # Local editor and machine-specific interpreter settings
-.vscode/
+.vscode/*
+!.vscode/tasks.json
 .idea/
 
 # Generated CAD output and test reports
