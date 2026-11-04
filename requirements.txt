@@ -1,4 +1,6 @@
-cadquery>=2.4
-numpy>=1.26
-networkx>=3.0
-trimesh>=4.0
+# CAD generation; CadQuery installs its required OpenCascade (OCP) packages.
+cadquery>=2.8,<3.0
+
+# Geometry calculations and printer-bed mesh nesting.
+numpy>=1.26,<3.0
+trimesh>=4.0,<5.0

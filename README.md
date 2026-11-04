@@ -41,16 +41,20 @@ If you already cloned without `--recurse-submodules`, run:
 git submodule update --init --recursive
 ```
 
-Python 3.14 with CadQuery 2.8 has been tested; Python 3.15 may not have
-compatible CadQuery/OCP packages available. On Windows, install the
-requirements in the same Python environment used to run the application:
+`requirements.txt` lists all direct Python dependencies required to run the
+generator: CadQuery, NumPy, and Trimesh. Pip also installs CadQuery's required
+OpenCascade (OCP) and other transitive dependencies automatically. Python 3.14
+with CadQuery 2.8 has been tested; Python 3.15 may not have compatible
+CadQuery/OCP packages available. On Windows, install everything in one command
+into the same Python environment used to run the application:
 
 ```powershell
 py -3.14 -m pip install -r requirements.txt
 ```
 
-The cloned clock library may have additional dependencies; follow its setup
-documentation if its import reports a missing package.
+Optional modules used by unrelated upstream features, such as documentation
+PDF generation and Git metadata, are not declared as direct dependencies
+because clock generation does not use them.
 
 ## Publishing developer changes
 
@@ -78,6 +82,17 @@ git submodule update --init --recursive
 
 These developer Git operations do not add runtime self-updates for people using
 the application.
+
+## License
+
+The MIT License in [`LICENSE`](./LICENSE) applies to the original application
+code and documentation in this repository. It does not replace or relicense
+third-party components.
+
+The `3DPrintedClocksGithub/3DPrintedClocks` submodule retains its separate
+CERN-OHL-S v2 license. Generated geometry that uses that library may also be
+subject to its terms. Review the upstream license and attribution requirements
+before distributing generated models or hardware.
 
 ## Library attribution
 
