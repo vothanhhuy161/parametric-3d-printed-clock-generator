@@ -24,7 +24,7 @@ class CadGenerator:
         output_directory: str | Path,
         library_path: str | Path | None = None,
     ):
-        self.output_directory = Path(output_directory)
+        self.output_directory = Path(output_directory).expanduser().resolve()
         self.library_path = (
             Path(library_path).resolve()
             if library_path is not None
@@ -32,6 +32,14 @@ class CadGenerator:
             / "3DPrintedClocksGithub"
             / "3DPrintedClocks"
         )
+        try:
+            self.output_directory.relative_to(self.library_path)
+        except ValueError:
+            pass
+        else:
+            raise CadGenerationError(
+                "The output directory cannot be inside the clock library directory."
+            )
 
     def generate(self, config: ClockConfig, solution: GearSolution) -> list[Path]:
         """Generate clock components in a temporary raw-STL directory."""
@@ -170,7 +178,8 @@ class CadGenerator:
                 day_directory = raw_directory / "day_complication"
                 day_directory.mkdir(parents=True, exist_ok=True)
                 for part_name, shape in day_of_week.get_parts_in_situ().items():
-                    target = day_directory / f"{part_name}.stl"
+                    safe_part_name = self._validate_part_name(part_name)
+                    target = day_directory / f"{safe_part_name}.stl"
                     cq.exporters.export(shape, str(target))
                     exported.append(target)
                 holder_path = day_directory / "day_holder.stl"
@@ -221,6 +230,33 @@ class CadGenerator:
                 for path in component_directory.glob("*.stl")
                 if re.match(rf"clock_{re.escape(label)}(?:_|\.|$)", path.name)
             )
+
+    @staticmethod
+    def _validate_part_name(part_name: str) -> str:
+        """Reject library-provided part names that could escape the output folder."""
+        if (
+            not isinstance(part_name, str)
+            or not part_name
+            or part_name in {".", ".."}
+            or part_name != part_name.strip()
+            or any(character in part_name for character in '<>:"/\\|?*')
+            or any(ord(character) < 32 for character in part_name)
+            or part_name.endswith((".", " "))
+        ):
+            raise CadGenerationError(
+                f"The clock library returned an unsafe part name: {part_name!r}."
+            )
+        reserved_name = part_name.split(".", 1)[0].upper()
+        if reserved_name in {
+            "CON", "PRN", "AUX", "NUL",
+            *(f"COM{index}" for index in range(1, 10)),
+            *(f"LPT{index}" for index in range(1, 10)),
+        }:
+            raise CadGenerationError(
+                f"The clock library returned a reserved Windows part name: "
+                f"{part_name!r}."
+            )
+        return part_name
 
 
 def _install_cadquery_text_compatibility(cadquery: Any) -> None:

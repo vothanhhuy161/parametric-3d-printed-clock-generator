@@ -129,6 +129,10 @@ The interactive mode asks where to save the generated files. By default, the
 program creates the next unused numbered folder under `GeneratedClock`, such
 as `GeneratedClock\Clock_1`, then `GeneratedClock\Clock_2`. Press Enter to use
 the displayed folder or enter another path.
+JSON configuration files are limited to 1 MiB and numeric fields must be JSON
+numbers (not quoted strings or booleans). Output paths are resolved before
+export, and the generator refuses to write generated files inside the upstream
+clock-library directory.
 
 Pass settings as command-line arguments:
 

@@ -100,8 +100,9 @@ def validate_config(config: ClockConfig) -> ValidationReport:
     if not _is_positive_finite(config.available_drop_path_mm):
         raise ConstraintError("available_drop_path_mm must be positive.")
     if (
-        not isinstance(config.estimated_friction_power_uw, Real)
-        or not math.isfinite(config.estimated_friction_power_uw)
+        isinstance(config.estimated_friction_power_uw, bool)
+        or not isinstance(config.estimated_friction_power_uw, Real)
+        or not _is_finite_real(config.estimated_friction_power_uw)
         or config.estimated_friction_power_uw < 0
     ):
         raise ConstraintError("estimated_friction_power_uw cannot be negative.")
@@ -134,15 +135,28 @@ def validate_config(config: ClockConfig) -> ValidationReport:
         raise ConstraintError("Printer Z dimension must be positive.")
 
     runtime_s = runtime_hours * 3600.0
-    available_power_uw = (
-        config.weight_mass_kg
-        * 9.80665
-        * (config.weight_drop_mm / 1000.0)
-        / runtime_s
-        * 1_000_000.0
-    )
-    complication_load_uw = 5.0 * len(config.complications)
-    required_power_uw = config.estimated_friction_power_uw + complication_load_uw
+    try:
+        available_power_uw = (
+            config.weight_mass_kg
+            * 9.80665
+            * (config.weight_drop_mm / 1000.0)
+            / runtime_s
+            * 1_000_000.0
+        )
+        complication_load_uw = 5.0 * len(config.complications)
+        required_power_uw = (
+            config.estimated_friction_power_uw + complication_load_uw
+        )
+    except OverflowError as exc:
+        raise ConstraintError(
+            "The configured power values exceed the supported numeric range."
+        ) from exc
+    if not _is_finite_real(available_power_uw) or not _is_finite_real(
+        required_power_uw
+    ):
+        raise ConstraintError(
+            "The configured power values produce a non-finite estimate."
+        )
     if available_power_uw < required_power_uw:
         raise ConstraintError(
             f"Estimated drive power is {available_power_uw:.1f} uW, below the "
@@ -187,4 +201,16 @@ def _positive_dimensions(name: str, dimensions: tuple[float, ...]) -> None:
 
 
 def _is_positive_finite(value: object) -> bool:
-    return isinstance(value, Real) and math.isfinite(value) and value > 0
+    return (
+        not isinstance(value, bool)
+        and isinstance(value, Real)
+        and _is_finite_real(value)
+        and value > 0
+    )
+
+
+def _is_finite_real(value: Real) -> bool:
+    try:
+        return math.isfinite(float(value))
+    except (OverflowError, ValueError):
+        return False
