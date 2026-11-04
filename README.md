@@ -5,6 +5,12 @@ This application validates a JSON clock configuration, calls the
 generate parts, then nests the exported STL components onto one or more printer
 plates.
 
+## AI use disclosure
+
+This application was developed with the assistance of generative AI tools.
+The application does not use AI at runtime; clock calculations and CAD
+generation are performed by its Python code and the 3DPrintedClocks library.
+
 ## Files
 
 ```text
@@ -45,6 +51,15 @@ py -3.14 -m pip install -r requirements.txt
 
 The cloned clock library may have additional dependencies; follow its setup
 documentation if its import reports a missing package.
+
+## Application updates
+
+When launched from a Git clone, the application checks the `main` branch of
+this GitHub repository and asks before applying an available update. It only
+fast-forwards a clean local branch and synchronizes the pinned
+3DPrintedClocks submodule. If local changes exist, the update is not applied.
+Restart the application after updating to use the new code. Use
+`--no-update-check` to skip the check for one run.
 
 ## Library attribution
 
