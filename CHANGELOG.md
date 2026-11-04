@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file.
 
 This changelog follows Keep a Changelog and Conventional Commits.
 
+## [0.1.1] - 2026-11-05
+
+### Added
+
+- Portable Windows application bundle build using PyInstaller.
+
+### Changed
+
+- Resolve bundled libraries from the application bundle and save generated files beside the executable.
+
 ## [0.1.0] - 2026-11-05
 
 ### Added

@@ -52,6 +52,26 @@ into the same Python environment used to run the application:
 py -3.14 -m pip install -r requirements.txt
 ```
 
+Windows users can also download the versioned portable
+`Parametric3DPrintedClockGenerator-vX.Y.Z-win64.zip` from the GitHub Releases
+page.
+
+To build the portable Windows bundle from source using Python 3.14:
+
+```powershell
+py -3.14 -m pip install -r requirements-build.txt
+.\scripts\build_windows.ps1 -Version 0.1.1
+```
+
+The ZIP is created in `dist`. The build script packages the clock-library
+revision pinned by the current Git commit.
+
+Extract the entire archive, then run `Parametric3DPrintedClockGenerator.exe`.
+Keep the `_internal` directory beside the executable; it contains the bundled
+Python, CAD dependencies, and clock library. The console window provides
+interactive setup and reports progress. Generated files are saved beside the
+executable unless another output directory is selected.
+
 Optional modules used by unrelated upstream features, such as documentation
 PDF generation and Git metadata, are not declared as direct dependencies
 because clock generation does not use them.

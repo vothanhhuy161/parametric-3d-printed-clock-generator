@@ -21,8 +21,17 @@ from nesting_exporter import NestingError, NestingExporter
 from validator import ConstraintError, validate_config
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-DEFAULT_LIBRARY = PROJECT_ROOT / "3DPrintedClocksGithub" / "3DPrintedClocks"
+PROJECT_ROOT = (
+    Path(sys.executable).resolve().parent
+    if getattr(sys, "frozen", False)
+    else Path(__file__).resolve().parent
+)
+LIBRARY_ROOT = (
+    Path(sys._MEIPASS)
+    if getattr(sys, "frozen", False)
+    else PROJECT_ROOT
+)
+DEFAULT_LIBRARY = LIBRARY_ROOT / "3DPrintedClocksGithub" / "3DPrintedClocks"
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "GeneratedClock"
 
 
