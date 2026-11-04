@@ -1,0 +1,3 @@
+[submodule "3DPrintedClocksGithub/3DPrintedClocks"]
+	path = 3DPrintedClocksGithub/3DPrintedClocks
+	url = https://github.com/MrBunsy/3DPrintedClocks.git

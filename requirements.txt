@@ -1,0 +1,4 @@
+cadquery>=2.4
+numpy>=1.26
+networkx>=3.0
+trimesh>=4.0
