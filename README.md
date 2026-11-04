@@ -52,14 +52,18 @@ py -3.14 -m pip install -r requirements.txt
 The cloned clock library may have additional dependencies; follow its setup
 documentation if its import reports a missing package.
 
-## Application updates
+## Updating the source as a developer
 
-When launched from a Git clone, the application checks the `main` branch of
-this GitHub repository and asks before applying an available update. It only
-fast-forwards a clean local branch and synchronizes the pinned
-3DPrintedClocks submodule. If local changes exist, the update is not applied.
-Restart the application after updating to use the new code. Use
-`--no-update-check` to skip the check for one run.
+This project does not check for or install updates when the clock generator is
+run. Developers can update their local source checkout explicitly:
+
+```powershell
+git pull --ff-only origin main
+git submodule update --init --recursive
+```
+
+These commands update the developer's source checkout only; they do not enable
+runtime self-updates for people using the application.
 
 ## Library attribution
 

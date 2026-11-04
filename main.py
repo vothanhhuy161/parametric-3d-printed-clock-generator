@@ -18,7 +18,6 @@ from design_review import (
 )
 from gear_solver import GearSolver
 from nesting_exporter import NestingError, NestingExporter
-from update_manager import check_for_updates
 from validator import ConstraintError, validate_config
 
 
@@ -74,11 +73,6 @@ def _build_parser() -> argparse.ArgumentParser:
             f"{MAX_DESIGN_DEVIATION_PERCENT:g}%%; deviations above "
             f"{MAX_DESIGN_DEVIATION_PERCENT:g}%% always stop generation."
         ),
-    )
-    parser.add_argument(
-        "--no-update-check",
-        action="store_true",
-        help="Skip the GitHub update check for this run.",
     )
     parser.add_argument(
         "--library",
@@ -379,17 +373,6 @@ def main(argv: list[str] | None = None) -> int:
     """Run configuration validation, train solving, CAD generation, and nesting."""
     parser = _build_parser()
     arguments = parser.parse_args(argv)
-
-    if argv is None and not arguments.no_update_check:
-        update_result = check_for_updates(
-            PROJECT_ROOT,
-            is_interactive=sys.stdin.isatty() and sys.stdout.isatty(),
-        )
-        print(update_result.message)
-        if update_result.updated:
-            return 0
-        if update_result.fatal:
-            return 2
 
     try:
         output_directory = arguments.output or _next_output_directory()
